@@ -5,7 +5,7 @@ Simple document
 
 ``` r
 library("p8105.datasets")
-acc=read_csv("C:/Users/10145/Desktop/DS project/P8105_hw3_zx2425/p8105_hw3_zx2425/accel_data.csv")
+acc=read_csv("C:/Users/10145/Desktop/p8105_hw2_zx2425(1)/p8105_hw3_zx2425/p8105_hw3_zx2425/accel_data.csv")
 ```
 
     ## Rows: 35 Columns: 1443
@@ -124,3 +124,80 @@ morning, noon and evening of a day. They are more likely to get high
 level of activity during weekend.
 
 \##problem3 \#introduce data
+
+``` r
+library(p8105.datasets)
+data("ny_noaa")
+nynoaadat=ny_noaa
+```
+
+``` r
+nynoaadat = separate(nynoaadat,date, into= c("year","month",'day'),sep= "-")
+
+nynoaadat=mutate(
+  nynoaadat, year=as.numeric(year),month=as.numeric(month),day=as.numeric(day),tmax=as.numeric(tmax),tmin=as.numeric(tmin))
+
+nynoaadat=nynoaadat %>% 
+  mutate(
+    snow=snow*10,
+    snwd=snwd*10
+  )
+nyno_fre=as.data.frame(table(nynoaadat$snow))
+
+nynoaadat %>% 
+  filter(month==1 | month== 7) %>% 
+  drop_na(tmax) %>% 
+  group_by(month,id,year) %>% 
+  summarize(
+      average_tmax=mean(tmax)
+    ) %>% 
+  ggplot(aes(x=year,y=average_tmax,color=month))+geom_point()+
+  facet_grid(.~month)
+```
+
+    ## `summarise()` has grouped output by 'month', 'id'. You can override using the
+    ## `.groups` argument.
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+nynoaadat %>% 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) %>% 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+    ## `geom_smooth()` using formula 'y ~ x'
+
+    ## Warning: Removed 1136276 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 1136276 rows containing missing values (geom_point).
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+ggplot(nynoaadat, aes(x = tmax, y = tmin)) + 
+  geom_hex()
+```
+
+    ## Warning: Removed 1136276 rows containing non-finite values (stat_binhex).
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-9-2.png)<!-- -->
+
+``` r
+snow100_filter=nynoaadat %>% 
+  mutate(
+    year=as.numeric(year),
+    year1=factor(year)
+  )
+snow100_filter=filter(snow100_filter, snow>0 & snow<1000, .keep_all=TRUE)
+
+
+ggplot(snow100_filter, aes(x = snow, fill = year1)) + 
+  geom_density(alpha = .4, adjust = .5, color = "blue")
+```
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
