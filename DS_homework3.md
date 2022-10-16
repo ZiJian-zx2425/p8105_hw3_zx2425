@@ -131,19 +131,43 @@ data("ny_noaa")
 nynoaadat=ny_noaa
 ```
 
+Firstly, the data frame contains 2595176 objects and 7 variables.
+Variables include id, date, prcp, snow, snwd, tmax, tmin  
+So the next step lets organize the data set and have a outlook.
+
 ``` r
 nynoaadat = separate(nynoaadat,date, into= c("year","month",'day'),sep= "-")
 
 nynoaadat=mutate(
   nynoaadat, year=as.numeric(year),month=as.numeric(month),day=as.numeric(day),tmax=as.numeric(tmax),tmin=as.numeric(tmin))
+```
 
+The resulting dataset is 2595176 \* 9. The new variables are ‘year’,
+‘month’ and ‘day’ which is extract by the data variable. The day_id mark
+a unique day. And the ‘prep’,‘snow’, ‘snwd’, are represent the weather
+condition which have different measurement.
+
+So next, Let’s unified the measurement standard of ‘prep’, ‘snow’,
+‘snwd’ and see the frequency of the ‘snow’.
+
+``` r
 nynoaadat=nynoaadat %>% 
   mutate(
     snow=snow*10,
     snwd=snwd*10
   )
 nyno_fre=as.data.frame(table(nynoaadat$snow))
+```
 
+First, we multiply 10 to each variable of ‘snow’ and ‘snwd’, this is
+because we do not want to lose data precision compared with the solution
+that is to divide by 10. At the same time, after viewing the frequency
+table of snow we can see the value of 0 is significantly larger than
+other values, This possibly because the possible of the snow of the city
+is low. Besides, we are comparing the frequency of no snow with the
+frequency of snow at a certain level at the city.
+
+``` r
 nynoaadat %>% 
   filter(month==1 | month== 7) %>% 
   drop_na(tmax) %>% 
@@ -158,7 +182,14 @@ nynoaadat %>%
     ## `summarise()` has grouped output by 'month', 'id'. You can override using the
     ## `.groups` argument.
 
-![](DS_homework3_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](DS_homework3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+According to the plot, we can see the range of tmax in January is
+\[-100,100\], and July is \[200,310\]. The range is pretty different
+either. On January is about 200, and on July is about 110 which
+represent the temperature difference in January is higher than in July.
+Both of them has outliers for exaple there are two extremely cold day on
+January which should pay more attention to the reason: wheather is the
+wrong data or not.
 
 ``` r
 nynoaadat %>% 
@@ -176,7 +207,7 @@ nynoaadat %>%
 
     ## Warning: Removed 1136276 rows containing missing values (geom_point).
 
-![](DS_homework3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](DS_homework3_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 ggplot(nynoaadat, aes(x = tmax, y = tmin)) + 
@@ -185,7 +216,9 @@ ggplot(nynoaadat, aes(x = tmax, y = tmin)) +
 
     ## Warning: Removed 1136276 rows containing non-finite values (stat_binhex).
 
-![](DS_homework3_files/figure-gfm/unnamed-chunk-9-2.png)<!-- -->
+![](DS_homework3_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
+
+Finally let’s analysis the snow weather.
 
 ``` r
 snow100_filter=nynoaadat %>% 
@@ -200,4 +233,4 @@ ggplot(snow100_filter, aes(x = snow, fill = year1)) +
   geom_density(alpha = .4, adjust = .5, color = "blue")
 ```
 
-![](DS_homework3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](DS_homework3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
