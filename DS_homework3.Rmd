@@ -50,7 +50,7 @@ select(-activity_name)
 acc
  
 ```
-The demensions of the raw dataset is ```r ncol(acc)``` * ```r nrow(acc)```. It has been translated to long format dataframe which means the activity variables are represented by the time that the action is issued and its costs. Also, there is a weedd variable represent the type of one day (weekend or not). Furthermore, we sum of one day's activity that showed in the sum variable.
+The demensions of the raw dataset is `r ncol(acc)` * `r nrow(acc)`. It has been translated to long format dataframe which means the activity variables are represented by the time that the action is issued and its costs. Also, there is a weedd variable represent the type of one day (weekend or not). Furthermore, we sum of one day's activity that showed in the sum variable.
 
 ```{r}
 acc_sum <- unique(data.frame('day' = acc$day_id, 
@@ -73,3 +73,48 @@ It we focus on the distribution of daily points and ignore the difference among 
 
 ##problem3
 #introduce data
+```{r}
+data("ny_noaa")
+nynoaadat=ny_noaa
+```
+Firstly, the dataframe contains 2595176 objects and 7 variables. Variables include  `r colnames(ny_noaa)` 
+
+So the next step lets orginize the dataset and have a outlook.
+
+```{r}
+nynoaadat = separate(nynoaadat,date, into= c("year","month",'day'),sep= "-")
+ 
+nynoaadat=mutate(
+  nynoaadat, year=as.double(year),month=as.double(month),day=as.double(day))
+```
+The resulting dataset is  `r nrow(nynoaadat)` * `r ncol(nynoaadat)`. The new variables are 'year', 'month' and 'day' which is extract by the data variable. The day_id mark a unique day. And the 'prep','snow', 'snwd', are represent the weather condition which have different measurement. 
+
+So next, Let's unified the measurement standard of 'prep', 'snow', 'snwd' and see the frequency of the 'snow'.
+
+```{r}
+nynoaadat=nynoaadat %>% 
+  mutate(
+    snow=snow*10,
+    snwd=snwd*10
+  )
+nyno_fre=as.data.frame(table(nynoaadat$snow))
+nyno_fre
+```
+First, we multiply 10 to each variable of 'snow' and 'snwd', this is because we do not want to lose data precision compared with the solution that is to divide by 10. At the same time, after viewing the frequency table of snow we can see the value of 0 is significantly larger than other values, This possibly because the possible of the snow of the city is low. Besides, we are comparing the frequency of no snow with the frequency of snow at a certain level at the city.
+
+```{r}
+nynoaadat %>% 
+  filter(month==1 | month== 7) %>% 
+  drop_na(tmax) %>% 
+  group_by(month,id,year) %>% 
+  summarize(
+      average_tmax=mean(tmax)
+    ) %>% 
+  ggplot(aes(x=year,y=average_tmax,color=month))+geom_point()+
+  facet_grid(.~month)
+```
+According to the plot, we can see the range of tmax in January is [-100,100], and July is [200,310]. The range is pretty different either. On January is about 200, and on July is about 110 which represent the temperature difference in January is higher than in July. Both of them has outliers for exaple there are two extremely cold day on January which should pay more attention to the reason: wheather is the wrong data or not.
+ 
+
+
+
