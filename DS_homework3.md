@@ -306,3 +306,39 @@ nynoaadat=ny_noaa
 Firstly, the data frame contains 2595176 objects and 7 variables.
 Variables include id, date, prcp, snow, snwd, tmax, tmin  
 So the next step lets organize the data set and have a outlook.
+
+``` r
+nynoaadat = separate(nynoaadat,date, into= c("year","month",'day'),sep= "-")
+
+nynoaadat=mutate(
+  nynoaadat, year=as.numeric(year),month=as.numeric(month),day=as.numeric(day))
+```
+
+The resulting dataset is 2595176 \* 9. The new variables are ‘year’,
+‘month’ and ‘day’ which is extract by the data variable. The day_id mark
+a unique day. And the ‘prep’,‘snow’, ‘snwd’, are represent the weather
+condition which have different measurement.
+
+So next, Let’s unified the measurement standard of ‘prep’, ‘snow’,
+‘snwd’ and see the frequency of the ‘snow’.
+
+``` r
+nynoaadat=nynoaadat %>% 
+  mutate(
+   prcp=prcp/10,
+   tmax=as.numeric(tmax)/10,
+   tmin=as.numeric(tmin)/10
+  )
+nyno_fre=as.data.frame(table(nynoaadat$snow))
+```
+
+## Answering the questions
+
+First, we divide 10 to each variable of ‘prcp’,‘tmin’ and ‘tmax’. At the
+same time, after viewing the frequency table of snow we can see the
+value of 0 is significantly larger than other values, This possibly
+because the possible of the snow of the city is low. Besides, we are
+comparing the frequency of no snow with the frequency of snow at a
+certain level at the city.
+
+## 
