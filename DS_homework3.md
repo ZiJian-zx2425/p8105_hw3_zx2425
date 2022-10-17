@@ -238,3 +238,19 @@ are represented by the time that the action is issued and its costs.
 Also, there is a ‘weedd’ variable represent the type of one day (weekend
 or not). Furthermore, we sum of one day’s activity that showed in the
 sum variable.
+
+\##analysis the sum of activity
+
+``` r
+acc_sum <- unique(data.frame('day' = acc$day_id, 
+                      'counts'=acc$sum))
+ggplot(acc_sum, aes(x = day, y = counts)) + 
+  geom_point()  
+```
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> This
+part calculate the total counts for each day, and draw a plot to find if
+there are any trends for each day’s activity. The results show that
+there are not apparent trend. However, during the 10\~30 days, there are
+more regular activities done than at the begining and in the end of
+those days.
