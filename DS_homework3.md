@@ -145,3 +145,96 @@ instacart %>%
 |:-----------------|------:|------:|------:|------:|------:|------:|------:|
 | Coffee Ice Cream | 13.77 | 14.32 | 15.38 | 15.32 | 15.22 | 12.26 | 13.83 |
 | Pink Lady Apples | 13.44 | 11.36 | 11.70 | 14.25 | 11.55 | 12.78 | 11.94 |
+
+\###problem2 \##introduce the dataset
+
+``` r
+library("p8105.datasets")
+acc=read_csv("C:/Users/10145/Desktop/p8105_hw2_zx2425(1)/p8105_hw3_zx2425/p8105_hw3_zx2425/accel_data.csv")
+```
+
+    ## Rows: 35 Columns: 1443
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr    (1): day
+    ## dbl (1442): week, day_id, activity.1, activity.2, activity.3, activity.4, ac...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+acc = acc %>% 
+  janitor::clean_names()
+acc
+```
+
+    ## # A tibble: 35 × 1,443
+    ##     week day_id day      activ…¹ activ…² activ…³ activ…⁴ activ…⁵ activ…⁶ activ…⁷
+    ##    <dbl>  <dbl> <chr>      <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+    ##  1     1      1 Friday      88.4    82.2    64.4    70.0    75.0    66.3    53.8
+    ##  2     1      2 Monday       1       1       1       1       1       1       1  
+    ##  3     1      3 Saturday     1       1       1       1       1       1       1  
+    ##  4     1      4 Sunday       1       1       1       1       1       1       1  
+    ##  5     1      5 Thursday    47.4    48.8    46.9    35.8    49.0    44.8    73.4
+    ##  6     1      6 Tuesday     64.8    59.5    73.7    45.7    42.4    58.4    76.8
+    ##  7     1      7 Wednesd…    71.1   103.     68.5    45.4    37.8    18.3    27.5
+    ##  8     2      8 Friday     675     542    1010     779     509     106     637  
+    ##  9     2      9 Monday     291     335     393     335     263     675     213  
+    ## 10     2     10 Saturday    64      11       1       1       1       1       1  
+    ## # … with 25 more rows, 1,433 more variables: activity_8 <dbl>,
+    ## #   activity_9 <dbl>, activity_10 <dbl>, activity_11 <dbl>, activity_12 <dbl>,
+    ## #   activity_13 <dbl>, activity_14 <dbl>, activity_15 <dbl>, activity_16 <dbl>,
+    ## #   activity_17 <dbl>, activity_18 <dbl>, activity_19 <dbl>, activity_20 <dbl>,
+    ## #   activity_21 <dbl>, activity_22 <dbl>, activity_23 <dbl>, activity_24 <dbl>,
+    ## #   activity_25 <dbl>, activity_26 <dbl>, activity_27 <dbl>, activity_28 <dbl>,
+    ## #   activity_29 <dbl>, activity_30 <dbl>, activity_31 <dbl>, …
+
+The demensions of the raw dataset is `1443` \* `35`. It contains the
+each minute of activity by days and its costs orginized by wide format.
+
+\#clean the dataset
+
+``` r
+acc = acc %>%   
+  mutate(weedd = case_when(
+    day == "Monday" | day=="Tuesday" | day=="Wednesday" | day == "Thursday"| day == "Friday" ~ "weekday",
+    day == "Saturday"|day=="Sunday" ~ "weekend" ,
+    TRUE     ~ "" ))
+acc = acc %>% 
+      mutate(
+    sum=rowSums(.[4:1443])
+  )
+acc=acc %>% 
+  pivot_longer(activity_1:activity_1440,names_to="act",values_to="cc") 
+acc=acc %>% 
+separate(act, into = c("activity_name", "minute")) %>%
+  mutate(
+    minute=as.numeric(minute)
+  ) %>% 
+select(-activity_name)
+acc
+```
+
+    ## # A tibble: 50,400 × 7
+    ##     week day_id day    weedd       sum minute    cc
+    ##    <dbl>  <dbl> <chr>  <chr>     <dbl>  <dbl> <dbl>
+    ##  1     1      1 Friday weekday 480543.      1  88.4
+    ##  2     1      1 Friday weekday 480543.      2  82.2
+    ##  3     1      1 Friday weekday 480543.      3  64.4
+    ##  4     1      1 Friday weekday 480543.      4  70.0
+    ##  5     1      1 Friday weekday 480543.      5  75.0
+    ##  6     1      1 Friday weekday 480543.      6  66.3
+    ##  7     1      1 Friday weekday 480543.      7  53.8
+    ##  8     1      1 Friday weekday 480543.      8  47.8
+    ##  9     1      1 Friday weekday 480543.      9  55.5
+    ## 10     1      1 Friday weekday 480543.     10  43.0
+    ## # … with 50,390 more rows
+
+### Answering the question resulting dataset
+
+The dimension of the resulting data set is `7` \* `50400`. It has been
+translated to long format data frame which means the activity variables
+are represented by the time that the action is issued and its costs.
+Also, there is a ‘weedd’ variable represent the type of one day (weekend
+or not). Furthermore, we sum of one day’s activity that showed in the
+sum variable.

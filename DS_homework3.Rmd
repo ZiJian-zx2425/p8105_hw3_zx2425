@@ -79,3 +79,40 @@ instacart %>%
   spread(key = order_dow, value = mean_hour) %>%
   knitr::kable(digits = 2)
 ```
+
+###problem2
+##introduce the dataset
+```{r}
+library("p8105.datasets")
+acc=read_csv("C:/Users/10145/Desktop/p8105_hw2_zx2425(1)/p8105_hw3_zx2425/p8105_hw3_zx2425/accel_data.csv")
+acc = acc %>% 
+  janitor::clean_names()
+acc
+```
+The demensions of the raw dataset is ```r ncol(acc)``` * ```r nrow(acc)```. It contains the
+each minute of activity by days and its costs orginized by wide format.
+
+#clean the dataset
+```{r}
+acc = acc %>%   
+  mutate(weedd = case_when(
+    day == "Monday" | day=="Tuesday" | day=="Wednesday" | day == "Thursday"| day == "Friday" ~ "weekday",
+    day == "Saturday"|day=="Sunday" ~ "weekend" ,
+    TRUE     ~ "" ))
+acc = acc %>% 
+      mutate(
+    sum=rowSums(.[4:1443])
+  )
+acc=acc %>% 
+  pivot_longer(activity_1:activity_1440,names_to="act",values_to="cc") 
+acc=acc %>% 
+separate(act, into = c("activity_name", "minute")) %>%
+  mutate(
+    minute=as.numeric(minute)
+  ) %>% 
+select(-activity_name)
+acc
+ 
+```
+### Answering the question resulting dataset
+The dimension of the resulting data set is ```r ncol(acc)``` * ```r nrow(acc)```. It has been translated to long format data frame which means the activity variables are represented by the time that the action is issued and its costs. Also, there is a 'weedd' variable represent the type of one day (weekend or not). Furthermore, we sum of one day's activity that showed in the sum variable.
