@@ -248,12 +248,13 @@ ggplot(acc_sum, aes(x = day, y = counts)) +
   geom_point()  
 ```
 
-![](DS_homework3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> This
-part calculate the total counts for each day, and draw a plot to find if
-there are any trends for each day’s activity. The results show that
-there are not apparent trend. However, during the 10\~30 days, there are
-more regular activities done than at the begining and in the end of
-those days.
+![](DS_homework3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+\##Answering questions about the trends This part calculate the total
+counts for each day, and draw a plot to find if there are any trends for
+each day’s activity. The results show that there are not apparent trend.
+However, during the 10\~30 days, there are more regular activities done
+than at the begining and in the end of those days.
 
 \##arrange the order and make a plot
 
@@ -283,13 +284,25 @@ ggplot(acc, aes(x = minute, y = cc , color=day)) +
   geom_point()  
 ```
 
-![](DS_homework3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- --> It we
-focus on the distribution of daily points and ignore the difference
-among weekdays, it shows that athletes are more active during at time of
-a day and the ending of a day. If compared different days during the
-week, we can see most of the outline of the figure is composed by green
-and red points, which possibly means that people are more active during
-weekend. We can conclude that for the patients, they keep an eye on
-their daily sport. And individuals always do more excercise at the
-morning, noon and evening of a day. They are more likely to get high
-level of activity during weekend.
+![](DS_homework3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+\##Answering questions It we focus on the distribution of daily points
+and ignore the difference among weekdays, it shows that athletes are
+more active during at time of a day and the ending of a day. If compared
+different days during the week, we can see most of the outline of the
+figure is composed by green and red points, which possibly means that
+people are more active during weekend. We can conclude that for the
+patients, they keep an eye on their daily sport. And individuals always
+do more excercise at the morning, noon and evening of a day. They are
+more likely to get high level of activity during weekend.
+
+\###problem3 \##introduce data
+
+``` r
+library(p8105.datasets)
+data("ny_noaa")
+nynoaadat=ny_noaa
+```
+
+Firstly, the data frame contains 2595176 objects and 7 variables.
+Variables include id, date, prcp, snow, snwd, tmax, tmin  
+So the next step lets organize the data set and have a outlook.
