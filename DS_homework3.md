@@ -122,3 +122,26 @@ instacart %>%
 | dog food care              | Snack Sticks Chicken & Rice Recipe Dog Treats |   30 |    1 |
 | dog food care              | Organix Chicken & Brown Rice Recipe           |   28 |    2 |
 | dog food care              | Small Dog Biscuits                            |   26 |    3 |
+
+Finally is a table showing the mean hour of the day at which Pink Lady
+Apples and Coffee Ice Cream are ordered on each day of the week. This
+table has been formatted in an untidy manner for human readers. Pink
+Lady Apples are generally purchased slightly earlier in the day than
+Coffee Ice Cream, with the exception of day 5.
+
+``` r
+instacart %>%
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
+  group_by(product_name, order_dow) %>%
+  summarize(mean_hour = mean(order_hour_of_day)) %>%
+  spread(key = order_dow, value = mean_hour) %>%
+  knitr::kable(digits = 2)
+```
+
+    ## `summarise()` has grouped output by 'product_name'. You can override using the
+    ## `.groups` argument.
+
+| product_name     |     0 |     1 |     2 |     3 |     4 |     5 |     6 |
+|:-----------------|------:|------:|------:|------:|------:|------:|------:|
+| Coffee Ice Cream | 13.77 | 14.32 | 15.38 | 15.32 | 15.22 | 12.26 | 13.83 |
+| Pink Lady Apples | 13.44 | 11.36 | 11.70 | 14.25 | 11.55 | 12.78 | 11.94 |
