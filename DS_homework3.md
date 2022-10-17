@@ -58,3 +58,67 @@ products found in 131209 orders from 131209 distinct users.
 Below is a table summarizing the number of items ordered from aisle. In
 total, there are 134 aisles, with fresh vegetables and fresh fruits
 holding the most items ordered by far.
+
+``` r
+instacart %>% 
+  count(aisle) %>% 
+  arrange(desc(n))
+```
+
+    ## # A tibble: 134 × 2
+    ##    aisle                              n
+    ##    <chr>                          <int>
+    ##  1 fresh vegetables              150609
+    ##  2 fresh fruits                  150473
+    ##  3 packaged vegetables fruits     78493
+    ##  4 yogurt                         55240
+    ##  5 packaged cheese                41699
+    ##  6 water seltzer sparkling water  36617
+    ##  7 milk                           32644
+    ##  8 chips pretzels                 31269
+    ##  9 soy lactosefree                26240
+    ## 10 bread                          23635
+    ## # … with 124 more rows
+
+Next is a plot that shows the number of items ordered in each aisle.
+Here, aisles are ordered by ascending number of items.
+
+``` r
+instacart %>% 
+  count(aisle) %>% 
+  filter(n > 10000) %>% 
+  mutate(aisle = fct_reorder(aisle, n)) %>% 
+  ggplot(aes(x = aisle, y = n)) + 
+  geom_point() + 
+  labs(title = "Number of items ordered in each aisle") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Our next table shows the three most popular items in aisles
+`baking ingredients`, `dog food care`, and `packaged vegetables fruits`,
+and includes the number of times each item is ordered in your table.
+
+``` r
+instacart %>% 
+  filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>%
+  group_by(aisle) %>% 
+  count(product_name) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 4) %>% 
+  arrange(desc(n)) %>%
+  knitr::kable()
+```
+
+| aisle                      | product_name                                  |    n | rank |
+|:---------------------------|:----------------------------------------------|-----:|-----:|
+| packaged vegetables fruits | Organic Baby Spinach                          | 9784 |    1 |
+| packaged vegetables fruits | Organic Raspberries                           | 5546 |    2 |
+| packaged vegetables fruits | Organic Blueberries                           | 4966 |    3 |
+| baking ingredients         | Light Brown Sugar                             |  499 |    1 |
+| baking ingredients         | Pure Baking Soda                              |  387 |    2 |
+| baking ingredients         | Cane Sugar                                    |  336 |    3 |
+| dog food care              | Snack Sticks Chicken & Rice Recipe Dog Treats |   30 |    1 |
+| dog food care              | Organix Chicken & Brown Rice Recipe           |   28 |    2 |
+| dog food care              | Small Dog Biscuits                            |   26 |    3 |
