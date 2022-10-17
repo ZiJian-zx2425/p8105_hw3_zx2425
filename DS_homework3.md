@@ -341,4 +341,28 @@ because the possible of the snow of the city is low. Besides, we are
 comparing the frequency of no snow with the frequency of snow at a
 certain level at the city.
 
-## 
+## draw average_tmax plot by years on January and July
+
+``` r
+nynoaadat %>% 
+  filter(month==1 | month== 7) %>% 
+  drop_na(tmax) %>% 
+  group_by(month,id,year) %>% 
+  summarize(
+      average_tmax=mean(tmax)
+    ) %>% 
+  ggplot(aes(x=year,y=average_tmax,color=month))+geom_point()+
+  facet_grid(.~month)
+```
+
+    ## `summarise()` has grouped output by 'month', 'id'. You can override using the
+    ## `.groups` argument.
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+According to the plot, we can see the range of tmax in January is
+\[-100,100\], and July is \[200,310\]. The range is pretty different
+either. On January is about 200, and on July is about 110 which
+represent the temperature difference in January is higher than in July.
+Both of them has outliers for exaple there are two extremely cold day on
+January which should pay more attention to the reason: wheather is the
+wrong data or not.
