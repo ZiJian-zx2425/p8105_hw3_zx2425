@@ -330,7 +330,16 @@ nynoaadat=nynoaadat %>%
    tmin=as.numeric(tmin)/10
   )
 nyno_fre=as.data.frame(table(nynoaadat$snow))
+head(nyno_fre)
 ```
+
+    ##   Var1    Freq
+    ## 1  -13       1
+    ## 2    0 2008508
+    ## 3    3    8790
+    ## 4    5    9748
+    ## 5    8    9962
+    ## 6   10    5106
 
 ## Answering the questions
 
@@ -366,3 +375,55 @@ represent the temperature difference in January is higher than in July.
 Both of them has outliers for exaple there are two extremely cold day on
 January which should pay more attention to the reason: wheather is the
 wrong data or not.
+
+\##Draw tmin_tmax and snow plots
+
+``` r
+tmx_tmin=
+  ggplot(nynoaadat, aes(x = tmax, y = tmin)) + 
+  geom_hex()
+tmx_tmin
+```
+
+    ## Warning: Removed 1136276 rows containing non-finite values (stat_binhex).
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+Finally let’s analysis the snow weather.
+
+``` r
+snow100_filter=nynoaadat %>% 
+  mutate(
+    year=as.numeric(year),
+    year1=factor(year)
+  )
+snow100_filter=filter(snow100_filter, snow>0 & snow<100, .keep_all=TRUE)
+
+
+dst1=ggplot(snow100_filter, aes(x = snow, fill = year1)) + 
+  geom_density(alpha = .4, adjust = .5, color = "blue")
+
+dst2=ggplot(snow100_filter, aes(x = year1, y = snow)) + 
+  geom_violin(aes(fill = year1), alpha = .5) + 
+  stat_summary(fun = "median", color = "blue")
+```
+
+Let’s draw a two-plant table
+
+``` r
+tmx_tmin/dst1
+```
+
+    ## Warning: Removed 1136276 rows containing non-finite values (stat_binhex).
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+tmx_tmin+dst2
+```
+
+    ## Warning: Removed 1136276 rows containing non-finite values (stat_binhex).
+
+    ## Warning: Removed 30 rows containing missing values (geom_segment).
+
+![](DS_homework3_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->

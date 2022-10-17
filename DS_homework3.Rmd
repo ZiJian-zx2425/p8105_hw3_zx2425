@@ -168,6 +168,7 @@ nynoaadat=nynoaadat %>%
    tmin=as.numeric(tmin)/10
   )
 nyno_fre=as.data.frame(table(nynoaadat$snow))
+head(nyno_fre)
 ```
 ## Answering the questions
 First, we divide 10 to each variable of 'prcp','tmin' and 'tmax'. At the same time, after viewing the frequency table of snow we can see the value of 0 is significantly larger than other values, This possibly because the possible of the snow of the city is low. Besides, we are comparing the frequency of no snow with the frequency of snow at a certain level at the city. 
@@ -186,5 +187,37 @@ nynoaadat %>%
   
 ```
 According to the plot, we can see the range of tmax in January is [-100,100], and July is [200,310]. The range is pretty different either. On January is about 200, and on July is about 110 which represent the temperature difference in January is higher than in July. Both of them has outliers for exaple there are two extremely cold day on January which should pay more attention to the reason: wheather is the wrong data or not. 
+
+##Draw tmin_tmax and snow plots
+```{r}
+tmx_tmin=
+  ggplot(nynoaadat, aes(x = tmax, y = tmin)) + 
+  geom_hex()
+tmx_tmin
+```
+
+Finally let's analysis the snow weather.
+```{r}
+snow100_filter=nynoaadat %>% 
+  mutate(
+    year=as.numeric(year),
+    year1=factor(year)
+  )
+snow100_filter=filter(snow100_filter, snow>0 & snow<100, .keep_all=TRUE)
+
+
+dst1=ggplot(snow100_filter, aes(x = snow, fill = year1)) + 
+  geom_density(alpha = .4, adjust = .5, color = "blue")
+
+dst2=ggplot(snow100_filter, aes(x = year1, y = snow)) + 
+  geom_violin(aes(fill = year1), alpha = .5) + 
+  stat_summary(fun = "median", color = "blue")
+```
+
+Let's draw a two-plant table
+```{r}
+tmx_tmin/dst1
+tmx_tmin+dst2
+```
 
 
